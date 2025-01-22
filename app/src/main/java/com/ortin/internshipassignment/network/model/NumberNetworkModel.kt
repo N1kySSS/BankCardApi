@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class NumberNetworkModel(
-    val lengthL: Int,
-    val luhn: Boolean
+    val length: Int? = null,
+    val luhn: Boolean? = null
 )

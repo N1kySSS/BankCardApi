@@ -4,11 +4,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CardNetworkModel(
-    val number: NumberNetworkModel,
-    val scheme: String,
-    val type: String,
-    val brand: String,
-    val prepaid: String,
-    val country: CountryNetworkModel,
-    val bank: BankNetworkModel
+    val number: NumberNetworkModel? = null,
+    val scheme: String? = null,
+    val type: String? = null,
+    val brand: String? = null,
+    val prepaid: String? = null,
+    val country: CountryNetworkModel? = null,
+    val bank: BankNetworkModel? = null
 )

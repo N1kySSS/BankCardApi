@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BankNetworkModel(
-    val name: String,
-    val url: String,
-    val phone: String,
-    val city: String
+    val name: String? = null,
+    val url: String? = null,
+    val phone: String? = null,
+    val city: String? = null
 )

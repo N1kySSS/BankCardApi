@@ -12,7 +12,7 @@ ktor = "2.3.12"
 koin = "4.0.0-RC2"
 kotlinx-datetime = "0.6.0"
 kotlinx-coroutines = "1.8.1"
-kotlinx-serialization = "1.7.1"
+kotlinx-serialization = "1.6.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -48,4 +48,5 @@ koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", ver
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
