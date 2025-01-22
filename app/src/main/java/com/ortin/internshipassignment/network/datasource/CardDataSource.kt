@@ -18,5 +18,4 @@ class CardDataSource {
     }.onFailure { cause ->
         Log.i(TAG, "Error in get card information: $cause")
     }
-
 }
