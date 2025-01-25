@@ -10,10 +10,11 @@ import kotlinx.coroutines.runBlocking
 
 class CardViewModel : ViewModel() {
     private val _cardInfo = awaitingResult()
+    val cardInfo = _cardInfo
 
     private fun getCardInfo() =
         viewModelScope.async(Dispatchers.IO + CoroutineName("GetCardInfoCoroutine")) {
-            CardDataSource().getCardInfo("") // TODO( add userInput )
+            CardDataSource().getCardInfo("22002404") // TODO( add userInput )
         }
 
     private fun awaitingResult() = runBlocking {
