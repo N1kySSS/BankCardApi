@@ -14,8 +14,9 @@ class CardViewModel : ViewModel() {
     private val _searchText = MutableStateFlow("45717360")
     val searchText = _searchText.asStateFlow()
 
-    private var _cardInfo = awaitingResult(searchText.value)
-    var cardInfo = _cardInfo
+    private val _cardInfo = MutableStateFlow(awaitingResult(searchText.value))
+    val cardInfo = _cardInfo.asStateFlow()
+
 
     private fun getCardInfo(cardNumber: String) =
         viewModelScope.async(Dispatchers.IO + CoroutineName("GetCardInfoCoroutine")) {
@@ -31,7 +32,6 @@ class CardViewModel : ViewModel() {
     }
 
     fun updateCardInformation() {
-        _cardInfo = awaitingResult(searchText.value)
-        cardInfo = _cardInfo
+        _cardInfo.value = awaitingResult(searchText.value)
     }
 }

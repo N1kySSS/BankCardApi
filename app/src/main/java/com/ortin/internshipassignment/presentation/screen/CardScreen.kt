@@ -17,10 +17,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,8 +29,11 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,17 +62,31 @@ fun CardScreen() {
     val focusManager = LocalFocusManager.current
 
     val viewModel = viewModel<CardViewModel>()
+    val card by viewModel.cardInfo.collectAsState()
     val searchText by viewModel.searchText.collectAsState()
-    val card = viewModel.cardInfo
     val onValueChanged: (String) -> Unit = viewModel::onSearchTextChange
 
-    val listOfText = listOf(
-        "Scheme / network: ${card?.scheme}", "Brand: ${card?.brand}",
-        "Card number\nLength: ${card?.number?.length}\nLuhn: ${card?.number?.luhn}",
-        "Type: ${card?.type}", "Prepaid: ${card?.prepaid}",
-        "Country: ${card?.country?.emoji} ${card?.country?.name}\n(latitude: ${card?.country?.latitude}, longitude: ${card?.country?.longitude})"
-    )
+    val listOfText = remember {
+        mutableStateOf(
+            listOf(
+                "Scheme / network: ${card?.scheme}", "Brand: ${card?.brand}",
+                "Card number\nLength: ${card?.number?.length}\nLuhn: ${card?.number?.luhn}",
+                "Type: ${card?.type}", "Prepaid: ${card?.prepaid}",
+                "Country: ${card?.country?.emoji} ${card?.country?.name}\n(latitude: ${card?.country?.latitude}, longitude: ${card?.country?.longitude})"
+            )
+        )
+    }
 
+    LaunchedEffect(
+        card
+    ) {
+        listOfText.value = listOf(
+            "Scheme / network: ${card?.scheme}", "Brand: ${card?.brand}",
+            "Card number\nLength: ${card?.number?.length}\nLuhn: ${card?.number?.luhn}",
+            "Type: ${card?.type}", "Prepaid: ${card?.prepaid}",
+            "Country: ${card?.country?.emoji} ${card?.country?.name}\n(latitude: ${card?.country?.latitude}, longitude: ${card?.country?.longitude})"
+        )
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -111,7 +129,7 @@ fun CardScreen() {
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(all = 8.dp),
-                    text = if (card?.scheme != null) "${card.scheme}" else "Scheme: no info",
+                    text = if (card?.scheme != null) "${card?.scheme}" else "Scheme: no info",
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
                     fontWeight = FontWeight(400),
@@ -121,7 +139,7 @@ fun CardScreen() {
                     modifier = Modifier
                         .align(Alignment.BottomStart)
                         .padding(all = 8.dp),
-                    text = if (card?.bank?.phone != null) "${card.bank.phone}" else "Phone: no info",
+                    text = if (card?.bank?.phone != null) "${card?.bank?.phone}" else "Phone: no info",
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
                     fontWeight = FontWeight(400),
@@ -202,82 +220,81 @@ fun CardScreen() {
             color = Color.Black,
         )
         Spacer(modifier = Modifier.height(8.dp))
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            items(6) { index: Int ->
+            repeat(listOfText.value.size) { index: Int ->
                 Text(
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .padding(all = 8.dp)
                         .fillMaxWidth(),
-                    text = "${index + 1}. ${listOfText[index]}",
+                    text = "${index + 1}. ${listOfText.value[index]}",
                     fontSize = 16.sp,
                     lineHeight = 20.sp,
                     fontWeight = FontWeight(400),
                     color = Color.Black,
                 )
             }
-            item {
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(top = 8.dp, start = 8.dp, end = 8.dp)
-                        .fillMaxWidth()
-                        .clickable {
-                            if (card?.bank?.city != null) {
-                                val uri = Uri.parse("geo:${card.bank.city}")
-                                val intent = Intent(Intent.ACTION_VIEW, uri)
-                                context.startActivity(intent)
-                            }
-                        },
-                    text = "7. Bank: ${card?.bank?.name}, Town: ${card?.bank?.city}",
-                    fontSize = 16.sp,
-                    lineHeight = 20.sp,
-                    fontWeight = FontWeight(400),
-                    color = Color.Black,
-                )
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(horizontal = 8.dp)
-                        .fillMaxWidth()
-                        .clickable {
-                            if (card?.bank?.url != null) {
-                                val geo = Uri.parse(card.bank.url)
-                                val intent = Intent(Intent.ACTION_VIEW, geo)
-                                context.startActivity(intent)
-                            }
-                        },
-                    text = "Url: ${card?.bank?.url}",
-                    fontSize = 16.sp,
-                    lineHeight = 20.sp,
-                    fontWeight = FontWeight(400),
-                    color = Color.Black,
-                )
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(horizontal = 8.dp)
-                        .fillMaxWidth()
-                        .clickable {
-                            if (card?.bank?.phone != null) {
-                                val telephone = Uri.parse("tel:${card.bank.phone}")
-                                val intent = Intent(Intent.ACTION_DIAL, telephone)
-                                context.startActivity(intent)
-                            }
-                        },
-                    text = "Phone: ${card?.bank?.phone}",
-                    fontSize = 16.sp,
-                    lineHeight = 20.sp,
-                    fontWeight = FontWeight(400),
-                    color = Color.Black,
-                )
-            }
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                    .fillMaxWidth()
+                    .clickable {
+                        if (card?.bank?.city != null) {
+                            val uri = Uri.parse("geo:${card?.bank?.city}")
+                            val intent = Intent(Intent.ACTION_VIEW, uri)
+                            context.startActivity(intent)
+                        }
+                    },
+                text = "7. Bank: ${card?.bank?.name}, Town: ${card?.bank?.city}",
+                fontSize = 16.sp,
+                lineHeight = 20.sp,
+                fontWeight = FontWeight(400),
+                color = Color.Black,
+            )
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(horizontal = 8.dp)
+                    .fillMaxWidth()
+                    .clickable {
+                        if (card?.bank?.url != null) {
+                            val geo = Uri.parse(card?.bank?.url)
+                            val intent = Intent(Intent.ACTION_VIEW, geo)
+                            context.startActivity(intent)
+                        }
+                    },
+                text = "Url: ${card?.bank?.url}",
+                fontSize = 16.sp,
+                lineHeight = 20.sp,
+                fontWeight = FontWeight(400),
+                color = Color.Black,
+            )
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(horizontal = 8.dp)
+                    .fillMaxWidth()
+                    .clickable {
+                        if (card?.bank?.phone != null) {
+                            val telephone = Uri.parse("tel:${card?.bank?.phone}")
+                            val intent = Intent(Intent.ACTION_DIAL, telephone)
+                            context.startActivity(intent)
+                        }
+                    },
+                text = "Phone: ${card?.bank?.phone}",
+                fontSize = 16.sp,
+                lineHeight = 20.sp,
+                fontWeight = FontWeight(400),
+                color = Color.Black,
+            )
         }
     }
 }
