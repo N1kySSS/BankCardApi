@@ -69,10 +69,10 @@ fun CardScreen() {
     val listOfText = remember {
         mutableStateOf(
             listOf(
-                "Scheme / network: ${card?.scheme}", "Brand: ${card?.brand}",
-                "Card number\nLength: ${card?.number?.length}\nLuhn: ${card?.number?.luhn}",
-                "Type: ${card?.type}", "Prepaid: ${card?.prepaid}",
-                "Country: ${card?.country?.emoji} ${card?.country?.name}\n(latitude: ${card?.country?.latitude}, longitude: ${card?.country?.longitude})"
+                "Scheme / network: ${card?.scheme?:"-"}", "Brand: ${card?.brand?:"-"}",
+                "Card number\nLength: ${card?.number?.length?:"-"}\nLuhn: ${card?.number?.luhn?:"-"}",
+                "Type: ${card?.type?:"-"}", "Prepaid: ${card?.prepaid?:"-"}",
+                "Country: ${card?.country?.emoji?:"-"} ${card?.country?.name?:"-"}\n(latitude: ${card?.country?.latitude?:"-"}, longitude: ${card?.country?.longitude?:"-"})"
             )
         )
     }
@@ -81,10 +81,10 @@ fun CardScreen() {
         card
     ) {
         listOfText.value = listOf(
-            "Scheme / network: ${card?.scheme}", "Brand: ${card?.brand}",
-            "Card number\nLength: ${card?.number?.length}\nLuhn: ${card?.number?.luhn}",
-            "Type: ${card?.type}", "Prepaid: ${card?.prepaid}",
-            "Country: ${card?.country?.emoji} ${card?.country?.name}\n(latitude: ${card?.country?.latitude}, longitude: ${card?.country?.longitude})"
+            "Scheme / network: ${card?.scheme?:"-"}", "Brand: ${card?.brand?:"-"}",
+            "Card number\nLength: ${card?.number?.length?:"-"}\nLuhn: ${card?.number?.luhn?:"-"}",
+            "Type: ${card?.type?:"-"}", "Prepaid: ${card?.prepaid?:"-"}",
+            "Country: ${card?.country?.emoji?:"-"} ${card?.country?.name?:"-"}\n(latitude: ${card?.country?.latitude?:"-"}, longitude: ${card?.country?.longitude?:"-"})"
         )
     }
     Column(
@@ -244,7 +244,7 @@ fun CardScreen() {
             Text(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                    .padding(horizontal = 8.dp)
                     .fillMaxWidth()
                     .clickable {
                         if (card?.bank?.city != null) {
@@ -253,7 +253,7 @@ fun CardScreen() {
                             context.startActivity(intent)
                         }
                     },
-                text = "7. Bank: ${card?.bank?.name}, Town: ${card?.bank?.city}",
+                text = "7. Bank: ${card?.bank?.name?:"-"}, Town: ${card?.bank?.city?:"-"}",
                 fontSize = 16.sp,
                 lineHeight = 20.sp,
                 fontWeight = FontWeight(400),
@@ -271,7 +271,7 @@ fun CardScreen() {
                             context.startActivity(intent)
                         }
                     },
-                text = "Url: ${card?.bank?.url}",
+                text = "Url: ${card?.bank?.url?:"-"}",
                 fontSize = 16.sp,
                 lineHeight = 20.sp,
                 fontWeight = FontWeight(400),
@@ -289,7 +289,7 @@ fun CardScreen() {
                             context.startActivity(intent)
                         }
                     },
-                text = "Phone: ${card?.bank?.phone}",
+                text = "Phone: ${card?.bank?.phone?:"-"}",
                 fontSize = 16.sp,
                 lineHeight = 20.sp,
                 fontWeight = FontWeight(400),
