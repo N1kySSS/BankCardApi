@@ -132,6 +132,7 @@ fun CardScreen() {
             modifier = Modifier
                 .widthIn(max = 320.dp)
                 .heightIn(max = 48.dp)
+                .padding(horizontal = 8.dp)
                 .fillMaxWidth(),
             value = searchText,
             onValueChange = onValueChanged,
