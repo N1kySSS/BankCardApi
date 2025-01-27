@@ -27,7 +27,7 @@ class CardViewModel : ViewModel() {
     }
 
     fun onSearchTextChange(text: String) {
-        _searchText.value = text
+        _searchText.value = text.trim().replace(" ", "")
     }
 
     fun updateCardInformation() {

@@ -1,5 +1,6 @@
 package com.ortin.internshipassignment.presentation.screen
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
@@ -50,6 +51,7 @@ import com.ortin.internshipassignment.ui.theme.InternshipAssignmentTheme
 import com.ortin.internshipassignment.ui.theme.LightGrey
 import com.ortin.internshipassignment.ui.theme.Silver
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun CardScreen() {
     val context = LocalContext.current
@@ -99,7 +101,7 @@ fun CardScreen() {
                 )
                 Text(
                     modifier = Modifier.align(Alignment.Center),
-                    text = "Card Number",
+                    text = if (viewModel.searchText.value == "") "Card Number" else viewModel.searchText.value,
                     fontSize = 16.sp,
                     lineHeight = 20.sp,
                     fontWeight = FontWeight(400),
