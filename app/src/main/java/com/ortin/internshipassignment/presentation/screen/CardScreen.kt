@@ -21,10 +21,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ortin.internshipassignment.R
 import com.ortin.internshipassignment.presentation.viewmodel.CardViewModel
 import com.ortin.internshipassignment.ui.theme.InternshipAssignmentTheme
+import com.ortin.internshipassignment.ui.theme.LightGrey
 import com.ortin.internshipassignment.ui.theme.Silver
 
 @Composable
@@ -51,7 +56,9 @@ fun CardScreen() {
     val focusManager = LocalFocusManager.current
 
     val viewModel = viewModel<CardViewModel>()
+    val searchText by viewModel.searchText.collectAsState()
     val card = viewModel.cardInfo
+    val onValueChanged: (String) -> Unit = viewModel::onSearchTextChange
 
     val listOfText = listOf(
         "Scheme / network: ${card?.scheme}", "Brand: ${card?.brand}",
@@ -102,7 +109,7 @@ fun CardScreen() {
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(all = 8.dp),
-                    text = if (card?.scheme != null )"${card.scheme}" else "Scheme: no info",
+                    text = if (card?.scheme != null) "${card.scheme}" else "Scheme: no info",
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
                     fontWeight = FontWeight(400),
@@ -112,7 +119,7 @@ fun CardScreen() {
                     modifier = Modifier
                         .align(Alignment.BottomStart)
                         .padding(all = 8.dp),
-                    text = if (card?.bank?.phone != null )"${card.bank.phone}" else "Phone: no info",
+                    text = if (card?.bank?.phone != null) "${card.bank.phone}" else "Phone: no info",
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
                     fontWeight = FontWeight(400),
@@ -126,14 +133,50 @@ fun CardScreen() {
                 .widthIn(max = 320.dp)
                 .heightIn(max = 48.dp)
                 .fillMaxWidth(),
-            value = "",
-            onValueChange = { },
+            value = searchText,
+            onValueChange = onValueChanged,
+            singleLine = true,
             shape = RoundedCornerShape(16.dp),
+            placeholder = {
+                Text(
+                    text = "Введите номер карты",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        color = LightGrey,
+                        lineHeight = 20.sp,
+                        fontWeight = FontWeight(400),
+                    ),
+                )
+            },
+            leadingIcon = {
+                IconButton(
+                    onClick = {
+                        viewModel.updateCardInformation()
+                        focusManager.clearFocus()
+                    },
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.search),
+                        contentDescription = "Поиск",
+                    )
+                }
+            },
+            trailingIcon = {
+                IconButton(
+                    onClick = { onValueChanged("") },
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.delete),
+                        contentDescription = "Стереть текст",
+                    )
+                }
+            },
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
+                    viewModel.updateCardInformation()
                     focusManager.clearFocus()
                 }
             ),
