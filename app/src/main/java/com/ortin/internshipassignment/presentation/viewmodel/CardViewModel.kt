@@ -3,35 +3,39 @@ package com.ortin.internshipassignment.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ortin.internshipassignment.network.datasource.CardDataSource
+import com.ortin.internshipassignment.network.model.CardNetworkModel
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CardViewModel : ViewModel() {
     private val _searchText = MutableStateFlow("45717360")
     val searchText = _searchText.asStateFlow()
 
-    private val _cardInfo = MutableStateFlow(awaitingResult(searchText.value))
+    private val _cardInfo = MutableStateFlow<CardNetworkModel?>(null)
     val cardInfo = _cardInfo.asStateFlow()
 
-
-    private fun getCardInfo(cardNumber: String) =
-        viewModelScope.async(Dispatchers.IO + CoroutineName("GetCardInfoCoroutine")) {
-            CardDataSource().getCardInfo(cardNumber)
+    init {
+        viewModelScope.launch {
+            updateCardInformation()
         }
-
-    private fun awaitingResult(cardNumber: String) = runBlocking {
-        getCardInfo(cardNumber).await().getOrNull()
     }
+
+    private suspend fun getCardInfo(cardNumber: String) =
+        withContext(Dispatchers.IO + CoroutineName("GetCardInfoCoroutine")) {
+            CardDataSource().getCardInfo(cardNumber).getOrNull()
+        }
 
     fun onSearchTextChange(text: String) {
         _searchText.value = text.trim().replace(" ", "")
     }
 
     fun updateCardInformation() {
-        _cardInfo.value = awaitingResult(searchText.value)
+        viewModelScope.launch {
+            _cardInfo.value = getCardInfo(searchText.value)
+        }
     }
 }
