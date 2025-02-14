@@ -12,3 +12,4 @@ val Pink40 = Color(0xFF7D5260)
 
 val Silver = Color(0xFF757575)
 val LightGrey = Color(0xFFbbbbbb)
+val CardNumber = Color(0xFF1152f7)

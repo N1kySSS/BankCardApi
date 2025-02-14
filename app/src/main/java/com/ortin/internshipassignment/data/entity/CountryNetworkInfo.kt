@@ -8,4 +8,8 @@ data class CountryNetworkInfo(
     val currency: String?,
     val latitude: Int?,
     val longitude: Int?
-)
+) {
+    override fun toString(): String {
+        return "numeric=$numeric, alpha2=$alpha2, name=$name, emoji=$emoji, currency=$currency, latitude=$latitude, longitude=$longitude"
+    }
+}

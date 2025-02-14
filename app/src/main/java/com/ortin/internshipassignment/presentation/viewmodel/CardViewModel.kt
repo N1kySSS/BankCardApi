@@ -61,7 +61,6 @@ class CardViewModel(dataBase: MainDB) : ViewModel() {
         }
     }
 
-    //TODO(check logic of work)
     private suspend fun saveCardInfo(cardNumber: String?, cardNetworkModel: CardNetworkModel?) {
         db.cardDao.insertCard(
             CardEntity(
